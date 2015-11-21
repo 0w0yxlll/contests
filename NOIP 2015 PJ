@@ -1,0 +1,15 @@
+# contests
+NOIP 2015 PJ Summary
+
+T1
+a typical MATH problem
+不断减去平方就可以了
+
+T2
+a typical simulation problem
+初始化的时候把矩阵四周围上一圈0
+
+T3
+40分做法:大暴力 枚举起止点 时间复杂度O2
+正解：
+
