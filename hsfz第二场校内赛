@@ -1,0 +1,159 @@
+# contests
+华附第二场校内赛总结
+
+【比赛过程】
+2h3T。。看上去好像挺够的样子
+然而只是看上去
+T1很快的大了出来
+T2一看就不想水暴力 于是想到貌似正解之后打了出来
+线性筛坑了好久 因为很少打（是没打过好吗）
+（我得找个时间去练练筛法）
+咦？我刚刚是不是立了个flag？
+结果总是有地方不对。。改来改去改来改去弄到只有20min做T3
+T3我觉得时间不够了于是随手打了个暴力 打完之后确认正确后还剩10min。。
+我顿时懵逼了 后来我觉得假如认真思考的话正解是可以想出来的
+
+这是一个惨痛的教训 直接导致了错失了一次难得的ak机会
+呸 是直接反应出我内心的脆弱和自卑
+因为我打T2的时候已经有点懵逼了 
+T2的预处理很麻烦 算了半天终于有点相信不会超时之后 我开始怀疑会不会MLE
+当我认为T2会死准备放弃的时候 奇迹出现了！
+测了半天发现这是对的 嘿嘿嘿
+我觉得这次是太不自信了 如果我有坚定的意志与信念 有些题目还是能够AC的
+
+T1 
+钦点小黄鸭
+好吧--清点
+【题目】
+大意是找一堆数的中位数
+1≤N≤200000 每个数在long long内
+【题解】
+STL的实际应用→→
+当然也可以手打快排or归并排序
+（据说这题数据专门卡没有快排的随机化 然而并不用在意
+【代码】
+（这次专门用邮件发了代码到pc上，于是粘上来）
+#include<iostream>
+#include<algorithm>
+#include<cstdio>
+#include<cstdlib>
+#define i64 long long
+#define maxn 200000+20
+using namespace std;
+
+i64 n,a[maxn];
+
+int main(){
+	freopen("middle.in","r",stdin);
+	freopen("middle.out","w",stdout);
+	cin>>n;
+	for(i64 i=1; i<=n; i++)
+		scanf("%I64d",&a[i]);
+	sort(a+1,a+n+1);		
+	cout<<a[n/2+1]<<endl;
+	return 0;
+}
+
+T2
+素数查询
+【题目】
+有q组查询，每组查询a~b（a≤b，包括a、b）间的素数个数。
+对于 30%的数据， 1≤a≤b≤1000, 1≤Q≤100；
+对于 50%的数据， 1≤a≤b≤1000, 1≤Q≤1000；
+对于 70%的数据， 1≤a≤b≤10000, 1≤Q≤1000；
+对于 100%的数据， 1≤a≤b≤10000000, 1≤Q≤500000。
+【题解】
+这题比较纠结的是平衡时空的复杂度
+考虑到a和b在10^7内 绝对不能素数判定 得打个表
+也就是素数（线性）筛法
+考虑到查询次数较多 可以考虑用前缀和，也就是差分来操作
+进行某些优化，比如把筛法写成线性的；初始化差分的时候覆盖掉筛法中不用的数组存储来节约空间。
+（flag：筛法专题预告）
+【代码+注释】
+#include<iostream>
+#include<cstdio>
+#include<cstdlib>
+using namespace std;
+#define i64 long long
+#define maxn 10000000+20
+
+int q;
+i64 a,b,is_notpr[maxn]={1,1},pr[maxn]={0},num_pr=0;
+
+void init(){
+	for(i64 i=2;i<maxn-10;i++){
+		if(!is_notpr[i])
+			pr[num_pr++]=i;
+		for(i64 j=0;j<num_pr&&i*pr[j]<maxn-10;j++){
+			is_notpr[i*pr[j]]=1;
+			if(!(i%pr[j]))
+				break;
+		}
+	}
+
+	i64 cnt=0;
+	pr[0]=0;
+	//注意这里要初始化0，因为原来pr[0]存储的是第一个素数2
+	for(i64 i=1;i<=maxn-10;i++){
+		if(is_notpr[i]==0) cnt++;
+		pr[i]=cnt; 
+	}
+}
+int main(){
+	freopen("prime.in","r",stdin);
+	freopen("prime.out","w",stdout);
+	cin>>q;
+	init();
+	for(int i=1;i<=q;i++){
+		scanf("%I64d%I64d",&a,&b);	
+		printf("%I64d\n",pr[b]-pr[a-1]);	
+	}
+	return 0;
+}
+
+T3
+征税区域
+【题目】
+给一个矩阵的面积与q组相对的顶点
+查询每组相对顶点构成矩形的面积
+（我觉得用面积来形容所求值非常贴切！）
+对于 30%的数据，1≤N,M≤100，1≤Q≤100；
+对于 100%的数据，1≤N,M≤500，1≤Q≤500000，输入保证结果小于 2^31-1。
+【题解】
+暴力可以骗70分 
+用容斥原理 稍微初始化一下 搞一个二维前缀和
+（即固定一个顶点为(1,1)）
+这个初始化是O(N^2)的
+每次查询就用大的面积减去两个小的加上一个小的
+【代码】
+这里给的是骗分代码 主要是帮助理解题意
+正解的代码很容易打 就不再打了
+#include<iostream>
+#include<cstdio>
+using namespace std;
+#define maxn 500+20
+#define i64 long long
+
+int n,m,q,x1,x2,y1,y2,a[maxn][maxn];
+i64 ans;
+
+int main(){
+	freopen("area.in","r",stdin);
+	freopen("area.out","w",stdout);
+	cin>>n>>m>>q;
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=m;j++)
+			scanf("%d",&a[i][j]);
+	for(int k=1;k<=q;k++){
+		ans=0;
+		scanf("%d%d%d%d",&x1,&y1,&x2,&y2);
+		for(int i=x1;i<=x2;i++)
+			for(int j=y1;j<=y2;j++)
+				ans+=a[i][j];
+		cout<<ans<<endl;
+	}
+	return 0;
+}
+
+【经验教训】
+要认真思考 不能随便交暴力==
