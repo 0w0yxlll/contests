@@ -1,0 +1,330 @@
+#contests
+hsfz1109 noip资格审核赛
+
+附件：
+华附信息学复赛集训-1（20161109）
+
+【比赛过程】
+18:00-22:00
+途中因为编译器的问题少了1.xh时间 但后来补上了
+T1调了挺久的 主要是思维混乱了 
+T2写了个暴力
+T3看着就不想做 于是直接看T4了
+T4水题
+T5字符串处理 但不知道为什么爆零了
+
+130分 rank8 →→
+组内16人
+
+T1  calculator
+【题目】
+按照描述写代码
+【题解】
+按照描述写代码
+【代码】
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+using namespace std;
+
+const int maxn = 120;
+char s[maxn],op;
+int lens,st,m1,m2,n,ans;
+
+int cal(int a,char b,int c){
+	if(b=='+') return a+c;
+	if(b=='-') return a-c;
+	if(b=='*') return a*c;
+	if(b=='/') return a/c;
+}
+
+int main(){
+	freopen("calculator.in","r",stdin);
+	freopen("calculator.out","w",stdout);
+	cin>>s;
+	m1=0;
+	m2=0;
+	st=0; 
+	lens=strlen(s);
+	int i=0;
+	while(i<lens){
+		if(st==0){
+			if(s[i]>='0'&&s[i]<='9'){
+				n=s[i]-'0';
+				m1=n;
+				st=1;
+			}
+			if(s[i]=='F'){
+				m1=-m1;
+				st=0;
+			}
+			if(s[i]=='+'||s[i]=='-'||s[i]=='*'||s[i]=='/'){
+				op=s[i];
+				st=2;
+			}
+			if(s[i]=='=')
+				st=0;
+			ans=m1;
+			i++;
+		}
+		if(st==1){
+			if(s[i]>='0'&&s[i]<='9'){
+				n=s[i]-'0';
+				if(m1>=0) m1=m1*10+n;
+					else m1=m1*10-n;
+				st=1; 
+			}
+			if(s[i]=='F'){
+				m1=-m1;
+				st=1;
+			}
+			if(s[i]=='+'||s[i]=='-'||s[i]=='*'||s[i]=='/'){
+				op=s[i];
+				st=2;
+			}
+			if(s[i]=='=')
+				st=0;
+			ans=m1;
+			i++;
+		}
+		if(st==2){
+			if(s[i]>='0'&&s[i]<='9'){
+				n=s[i]-'0';
+				m2=n;
+				st=3;
+			}
+			if(s[i]=='F'){
+				m2=0;
+				st=3;
+			}
+			if(s[i]=='+'||s[i]=='-'||s[i]=='*'||s[i]=='/'){
+				op=s[i];
+				st=2;
+			}
+			if(s[i]=='=')
+				st=0;			
+			ans=m1;
+			i++;
+		}
+		if(st==3){
+			if(s[i]>='0'&&s[i]<='9'){
+				n=s[i]-'0';
+				if(m2>=0) m2=m2*10+n;
+					else m2=m2*10-n;
+				st=3; 
+			}
+			if(s[i]=='F'){
+				m2=-m2;
+				st=3;
+			}
+			if(s[i]=='+'||s[i]=='-'||s[i]=='*'||s[i]=='/'){
+				m1=cal(m1,op,m2);
+				op=s[i];
+				st=2;
+			}		
+			if(s[i]=='='){
+				m1=cal(m1,op,m2);
+				st=0;
+			}	
+			ans=m2;
+			i++;
+		}
+	}
+	cout<<ans<<endl;
+	return 0;
+} 
+
+T2 operator
+【 题目】
+ 给一个由数字组成字符串和一个由符号组成的字符串
+ 处理成一个合法的等式
+ 【题解】
+ 正解是搜索
+ 可以先处理符号个数为2的骗分
+ 【骗分代码】
+ #include<iostream>
+#include<cstdio>
+#include<cstring>
+using namespace std;
+
+const int maxn = 60;
+char len1,len2,s1[maxn],s2[7];
+
+long long trn(int x,int y){
+	long long cur=1,re=0;
+	for(int i=y;i>=x;i--){
+		re+=((s1[i]-'0')*cur);
+		cur*=10;		
+	}		
+	return re;
+}
+
+long long opr(long long x,char y,long long z){
+	if(y=='+') return x+z;
+	if(y=='-') return x-z;
+	if(y=='*') return x*z;
+} 
+
+int main(){
+	freopen("operator.in","r",stdin);
+	freopen("operator.out","w",stdout);
+	cin>>s1>>s2;
+	len1=strlen(s1);
+	len2=strlen(s2);
+	bool flag=true;
+	if(len2==2) {
+		for(int i=0;i<len1;i++)
+			for(int j=i;j<len1;j++){
+				if(flag==false) break;
+				long long a=trn(0,i),b=trn(i+1,j),c=trn(j+1,len1-1);
+				if(opr(a,s2[0],b)==c){
+					cout<<a<<s2[0]<<b<<"="<<c<<endl;
+					flag=false;
+				}
+			}
+	}
+	return 0;
+}
+
+T3  money
+【题解】
+应该是dp？或者贪心？
+
+T4  travel
+【题目】 
+给一个矩阵 求里面和最大的子矩阵
+矩阵长宽不超过50
+【题解】
+ 题目数据小 所以可以直接暴力
+ 正解是容斥原理
+ 用前缀和优化2次
+ 
+ 【代码】
+ #include<iostream>
+#include<cstdio>
+using namespace std;
+
+const int maxn = 60;
+int m,n,a[maxn][maxn],b[maxn][maxn],ans;
+
+int main(){
+	freopen("travel.in","r",stdin);
+	freopen("travel.out","w",stdout);
+	cin>>m>>n;
+	for(int i=1;i<=m;i++)
+		for(int j=1;j<=n;j++){
+			cin>>a[i][j];
+			b[i][j]=0;			
+		}
+	b[1][1]=a[1][1];
+	for(int i=2;i<=m;i++)
+		b[i][1]=b[i-1][1]+a[i][1];
+	for(int i=2;i<=n;i++)
+		b[1][i]=b[1][i-1]+a[1][i];
+	for(int i=2;i<=m;i++)
+		for(int j=2;j<=n;j++)
+			b[i][j]=b[i-1][j]+b[i][j-1]+a[i][j]-b[i-1][j-1];
+	ans=a[1][1];
+	for(int i=1;i<=m;i++)
+		for(int j=1;j<=n;j++)
+			for(int k=i;k<=m;k++)
+				for(int p=j;p<=n;p++){
+					int cur;
+					cur=b[k][p]-b[k][j-1]-b[i-1][p]+b[i-1][j-1];
+					if(cur>ans) ans=cur;
+				}
+	cout<<ans<<endl;
+	return 0;
+}
+
+T5 music
+【题目】
+字符串处理  
+详见附件
+【题解】
+某些地方比较麻烦 要一些小技巧 
+但我不知道为什么爆零了
+【代码】
+虽然莫名爆零了
+有一些细节上可以看 
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+using namespace std;
+
+const int maxn = 250;
+const int key[]={9,11,0,2,4,5,7};
+const char num[]={'C','0','D','0','E','F','0','G','0','A','0','B'};
+//0C 1#C 2D 3#D 4E 5F 6#F 7G 8#G 9A 10#A 11B 
+char s[maxn];
+int lens,lenv,n,st[maxn],v[maxn];
+
+void test(){
+	cout<<lenv<<endl;
+	for(int i=0;i<lenv;i++)
+		cout<<"v:"<<v[i]<<" "<<"st:"<<st[i]<<" ";
+	cout<<endl;
+}
+
+void init(){
+	lenv=0;
+	lens=strlen(s);	
+	st[0]=0;
+	v[0]=0;
+	for(int i=0;i<lens;i++){
+		if(s[i]=='>') st[lenv]++;
+		if(s[i]=='<') st[lenv]--;
+		if(s[i]=='#') {
+			i++;
+			v[lenv]++;
+		}
+		if(s[i]>='A'&&s[i]<='G') {
+			v[lenv]+=key[s[i]-'A']+n;	
+			lenv++;
+			v[lenv]=0;
+			st[lenv]=st[lenv-1];
+		} 
+	}
+	for(int i=0;i<lenv;i++){
+		while(v[i]<0){
+			v[i]+=12;
+			st[i]--;
+		}  
+		while(v[i]>11){
+			v[i]-=12;
+			st[i]++;
+		}
+	}
+}
+
+void output(){
+	for(int i=0;i<lenv;i++){
+		int t;
+		if(i==0) t=0;
+			else t=st[i-1];
+		for(int j=1;j<=st[i]-t;j++) 
+			cout<<">";
+		for(int j=1;j<=t-st[i];j++)
+			cout<<"<";
+		if(num[v[i]]=='0'){
+			cout<<"#";
+			v[i]--;
+		} 
+		cout<<num[v[i]];
+	}
+	cout<<endl;
+}
+
+int main(){
+	freopen("music.in","r",stdin);
+	freopen("music.out","w",stdout);
+	cin>>s>>n;
+	init();
+	output();
+	return 0;
+} 
+
+【经验教训】
+一开始 集成开发环境要调好
+思考好再写（特别是码农题）
+ 
